@@ -8,16 +8,18 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Y SOLUTIONS</h3>
-        <a href="dashboard.html" class="active">Dashboard</a>
-        <a href="quotations.html">Quotations</a>
-        <a href="warehouse.html">Warehouse</a>
-        <a href="projects.html">Projects</a>
-        <a href="employees.html">Employees</a>
-        <hr>
-        <a href="#" onclick="logout()" class="text-danger">Logout</a>
+   <div class="sidebar">
+    <div class="p-4 text-center border-bottom border-secondary mb-3">
+        <h4 class="fw-bold" style="color:#c5a059">Y SOLUTIONS</h4>
+        <span id="userBadge" class="badge bg-secondary">ROLE</span>
     </div>
+
+    <nav class="nav flex-column" id="sideMenu"></nav>
+
+    <div class="mt-auto p-4 border-top border-secondary">
+        <button class="btn btn-outline-danger w-100 btn-sm" onclick="logout()">Logout</button>
+    </div>
+</div>
 
     <div class="main-content">
         <div class="topbar"><h2>Overview</h2></div>
