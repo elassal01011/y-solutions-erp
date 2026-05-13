@@ -5,13 +5,13 @@ function buildMenu(userRole) {
     if (!menuContainer) return;
 
     // Define permissions for each role
-    const rolePermissions = {
-        'management': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'],
-        'sales': ['main', 'sales', 'archive'],
-        'operations': ['main', 'ops', 'storage', 'archive'],
-        'storage': ['storage']
-    };
-
+  // Change 'management' to 'manager' here to match your database
+const rolePermissions = {
+    'manager': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'], // Updated this line
+    'sales': ['main', 'sales', 'archive'],
+    'operations': ['main', 'ops', 'storage', 'archive'],
+    'storage': ['storage']
+};
     // Define the link details (icon, label, and file name)
     const items = {
         main: { icon: 'fa-chart-pie', label: 'Dashboard', link: 'dashboard.html' },
