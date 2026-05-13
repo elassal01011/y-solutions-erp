@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #f4f5f7;
+}
+
+.sidebar {
+    position: fixed;
+    width: 260px;
+    height: 100vh;
+    background: #0f0f0f;
+    color: white;
+    padding: 30px;
+}
+
+.sidebar h3 {
+    color: #d4af37;
+    margin-bottom: 40px;
+}
+
+.sidebar a {
+    display: block;
+    color: #ccc;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.sidebar a:hover {
+    color: #d4af37;
+}
+
+.main-content {
+    margin-left: 260px;
+    padding: 30px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.login-body {
+    background: linear-gradient(135deg,#000,#222);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    width: 400px;
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+}
+
+.login-card h1 {
+    color: #d4af37;
+}
