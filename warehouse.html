@@ -8,38 +8,67 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h3>Y SOLUTIONS</h3>
-        <a href="dashboard.html">Dashboard</a>
-        <a href="quotations.html">Quotations</a>
-        <a href="warehouse.html" class="active">Warehouse</a>
-        <a href="projects.html">Projects</a>
-        <hr>
-        <a href="#" onclick="logout()" class="text-danger">Logout</a>
+
+<div class="sidebar">
+    <h3>Y SOLUTIONS</h3>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="quotations.html">Quotations</a>
+    <a href="warehouse.html" class="active">Warehouse</a>
+    <a href="projects.html">Projects</a>
+    <a href="employees.html">Employees</a>
+    <hr>
+    <a href="#" onclick="logout()" class="text-danger">Logout</a>
+</div>
+
+<div class="main-content">
+    <div class="topbar d-flex justify-content-between align-items-center">
+        <h2>Warehouse Management</h2>
+        <button class="btn btn-warning fw-bold" data-bs-toggle="modal" data-bs-target="#addItemModal">+ Add New Item</button>
     </div>
 
-    <div class="main-content">
-        <div class="topbar"><h2>Warehouse Management</h2></div>
-        <div class="card p-4 mt-3">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Item Name</th>
-                        <th>Stock Level</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody id="warehouseTable">
-                    </tbody>
-            </table>
+    <div class="card p-4 mt-4 shadow-sm">
+        <table class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Item Name</th>
+                    <th>Stock Level</th>
+                    <th>Price (EGP)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="warehouseTable">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Inventory Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="itemName" class="form-control mb-3" placeholder="Item Name">
+                <input type="number" id="itemStock" class="form-control mb-3" placeholder="Current Stock">
+                <input type="number" id="itemPrice" class="form-control mb-3" placeholder="Price per Unit">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning" onclick="addNewItem()">Save Item</button>
+            </div>
         </div>
     </div>
+</div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="firebase/config.js"></script>
-    <script src="js/warehouse.js"></script>
-    <script src="js/auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase/config.js"></script>
+<script src="js/warehouse.js"></script>
+<script src="js/auth.js"></script>
 </body>
 </html>
