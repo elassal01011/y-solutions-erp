@@ -1,22 +1,57 @@
 async function updateDashboardStats() {
-    // Get Total Projects
-    const projectsSnap = await db.collection('projects').get();
-    document.getElementById('stat-projects').innerText = projectsSnap.size;
 
-    // Get Total Employees
-    const employeesSnap = await db.collection('employees').get();
-    document.getElementById('stat-employees').innerText = employeesSnap.size;
+    try {
 
-    // Calculate Total Inventory Value
-    const stockSnap = await db.collection('products').get();
-    let totalValue = 0;
-    stockSnap.forEach(doc => {
-        totalValue += (doc.data().buyPrice * doc.data().stock);
-    });
-    document.getElementById('stat-revenue').innerText = `${totalValue.toLocaleString()} EGP`;
+        // Projects
+        const projectsSnap = await db.collection('projects').get();
+
+        const projectsEl = document.getElementById('stat-projects');
+
+        if(projectsEl){
+            projectsEl.innerText = projectsSnap.size;
+        }
+
+        // Employees
+        const employeesSnap = await db.collection('employees').get();
+
+        const employeesEl = document.getElementById('stat-employees');
+
+        if(employeesEl){
+            employeesEl.innerText = employeesSnap.size;
+        }
+
+        // Products
+        const stockSnap = await db.collection('products').get();
+
+        let totalValue = 0;
+
+        stockSnap.forEach(doc => {
+
+            const data = doc.data();
+
+            totalValue += (data.buyPrice || 0) * (data.stock || 0);
+
+        });
+
+        const revenueEl = document.getElementById('stat-revenue');
+
+        if(revenueEl){
+            revenueEl.innerText =
+                `${totalValue.toLocaleString()} EGP`;
+        }
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+    }
+
 }
 
-// Run on load
-if (document.getElementById('salesChart')) {
+window.addEventListener('load',()=>{
+
     updateDashboardStats();
-}
+
+});
