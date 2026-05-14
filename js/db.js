@@ -1,5 +1,7 @@
 const ctx = document.getElementById('salesChart');
 
+if(ctx){
+
 new Chart(ctx, {
     type: 'line',
     data: {
@@ -11,3 +13,5 @@ new Chart(ctx, {
         }]
     }
 });
+
+}
