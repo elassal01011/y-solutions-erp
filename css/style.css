@@ -1,84 +1,210 @@
-:root { 
-    --violet-dark: #662D91; 
-    --violet-light: #E0CEEB; 
-    --violet-bg: #F9F6FB; /* Very light violet/off-white for the main background */
-    --white: #ffffff;
-    --text-dark: #333333;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+:root{
+    --primary:#a970ff;
+    --primary-light:#d7b9ff;
+    --dark:#221b35;
+    --bg:#f6f2ff;
+    --card:#ffffffcc;
+    --border:#ffffff66;
+    --shadow:0 10px 40px rgba(169,112,255,0.18);
 }
 
-body { 
-    background: var(--violet-bg); 
-    font-family: 'Segoe UI', sans-serif; 
-    margin: 0; 
-    color: var(--text-dark);
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* SIDEBAR STYLES */
-.sidebar {
-    position: fixed; 
-    width: 260px; 
-    height: 100vh; 
-    background: var(--violet-light); /* Changed from dark to soft violet */
-    color: var(--violet-dark); 
-    padding: 30px;
-    border-right: 1px solid rgba(102, 45, 145, 0.1);
+body{
+    font-family:'Inter',sans-serif;
+    background:linear-gradient(135deg,#f7f4ff,#ece5ff);
+    color:var(--dark);
+    overflow-x:hidden;
 }
 
-.sidebar h3, .sidebar h4 { 
-    color: var(--violet-dark); /* Replaced gold */
-    margin-bottom: 40px; 
-    font-weight: bold; 
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    width:300px;
+    height:100vh;
+    left:0;
+    top:0;
+    padding:30px;
+    background:rgba(255,255,255,0.55);
+    backdrop-filter:blur(20px);
+    border-right:1px solid rgba(255,255,255,0.3);
+    display:flex;
+    flex-direction:column;
+    z-index:1000;
 }
 
-.sidebar a {
-    display: block; 
-    color: var(--violet-dark); /* Dark violet links instead of grey */
-    text-decoration: none;
-    margin-bottom: 10px; 
-    transition: 0.3s;
-    font-weight: 500;
-    padding: 12px 15px;
-    border-radius: 8px; /* Rounded corners for the menu items */
+.logo{
+    text-align:center;
+    margin-bottom:40px;
 }
 
-/* Modern block-style hover effect */
-.sidebar a:hover, .sidebar a.active { 
-    background: var(--violet-dark);
-    color: var(--white) !important; 
-    padding-left: 20px; 
+.logo img{
+    width:160px;
+    margin-bottom:15px;
+}
+
+.role-badge{
+    display:inline-block;
+    background:linear-gradient(135deg,#b987ff,#9d63ff);
+    color:white;
+    padding:12px 30px;
+    border-radius:20px;
+    font-weight:600;
+    letter-spacing:1px;
+    box-shadow:0 8px 20px rgba(169,112,255,0.4);
+}
+
+.menu{
+    margin-top:40px;
+}
+
+.menu a{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    text-decoration:none;
+    color:var(--dark);
+    font-size:20px;
+    padding:18px 20px;
+    border-radius:18px;
+    margin-bottom:10px;
+    transition:0.3s;
+}
+
+.menu a:hover{
+    background:white;
+    transform:translateX(5px);
+    box-shadow:var(--shadow);
+}
+
+.logout-btn{
+    margin-top:auto;
+    border:2px solid #2a1d42;
+    background:transparent;
+    border-radius:18px;
+    padding:18px;
+    font-size:22px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.logout-btn:hover{
+    background:#2a1d42;
+    color:white;
 }
 
 /* MAIN CONTENT */
-.main-content { 
-    margin-left: 260px; 
-    padding: 40px; 
+
+.main{
+    margin-left:320px;
+    padding:40px;
 }
 
-.stat-card {
-    background: var(--white); 
-    border-radius: 15px; 
-    padding: 25px;
-    /* Soft purple shadow instead of harsh grey */
-    box-shadow: 0 4px 15px rgba(102, 45, 145, 0.08); 
-    border-left: 5px solid var(--violet-dark); /* Replaced gold border */
+/* TOPBAR */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
 }
 
-/* LOGIN PAGE */
-.login-body {
-    /* Fresh violet gradient instead of the dark black gradient */
-    background: linear-gradient(135deg, var(--violet-bg), var(--violet-light));
-    height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
+.topbar h1{
+    font-size:42px;
+    font-family:'Poppins',sans-serif;
+    font-weight:700;
 }
 
-.login-card {
-    width: 380px; 
-    background: var(--white); 
-    padding: 40px; 
-    border-radius: 20px;
-    /* Modern, soft elevated shadow */
-    box-shadow: 0 10px 30px rgba(102, 45, 145, 0.15);
-    border: 1px solid rgba(102, 45, 145, 0.2);
+/* GRID */
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:30px;
+}
+
+/* CARDS */
+
+.glass-card{
+    background:rgba(255,255,255,0.55);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.4);
+    border-radius:35px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    transition:0.4s;
+}
+
+.glass-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 20px 60px rgba(169,112,255,0.3);
+}
+
+.glass-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* BIG BANNER */
+
+.banner{
+    height:350px;
+    margin-top:30px;
+}
+
+/* STATS */
+
+.stats{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.stat-box{
+    background:rgba(255,255,255,0.55);
+    backdrop-filter:blur(20px);
+    border-radius:28px;
+    padding:30px;
+    box-shadow:var(--shadow);
+}
+
+.stat-box h2{
+    font-size:40px;
+    color:var(--primary);
+}
+
+.stat-box p{
+    margin-top:10px;
+    color:#666;
+    font-size:18px;
+}
+
+/* MOBILE */
+
+@media(max-width:991px){
+
+    .sidebar{
+        width:100%;
+        height:auto;
+        position:relative;
+    }
+
+    .main{
+        margin-left:0;
+        padding:20px;
+    }
+
+    .dashboard-grid{
+        grid-template-columns:1fr;
+    }
+
 }
