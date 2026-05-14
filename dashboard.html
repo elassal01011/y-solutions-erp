@@ -1,47 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Y SOLUTIONS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Y SOLUTIONS ERP</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
 </head>
+
 <body>
-  <div class="sidebar">
-    <div class="text-center p-3">
-        <h4 style="color: #c5a059;">Y SOLUTIONS</h4>
-        <span id="userBadge" class="badge bg-primary">ROLE</span>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <div class="logo">
+
+        <img src="https://i.imgur.com/Q5oJXGx.png">
+
+        <div class="role-badge">
+            MANAGEMENT
+        </div>
+
     </div>
-    <hr style="background-color: white;">
-    <nav id="sideMenu" class="nav flex-column"></nav>
-    <div class="p-3 mt-auto">
-        <button class="btn btn-outline-danger w-100" onclick="logout()">Logout</button>
+
+    <div class="menu">
+
+        <a href="#">
+            <i class="fa-solid fa-chart-column"></i>
+            Dashboard
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-file-invoice"></i>
+            Quotations
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-warehouse"></i>
+            Warehouse
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-users"></i>
+            Employees
+        </a>
+
     </div>
+
+    <button class="logout-btn">
+        Logout
+    </button>
+
 </div>
 
-    <div class="main-content">
-        <div class="topbar"><h2>Overview</h2></div>
-        <div class="row g-4 mt-2">
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <h5>Total Stock Value</h5>
-                    <h2 id="total-val">Loading...</h2>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stat-card">
-                    <h5>Active Projects</h5>
-                    <h2 id="proj-count">31</h2>
-                </div>
-            </div>
-        </div>
+<!-- MAIN -->
+
+<div class="main">
+
+    <div class="topbar">
+
+        <h1>Enterprise Dashboard</h1>
+
+        <i class="fa-solid fa-bars fa-2x"></i>
+
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="firebase/config.js"></script>
-    <script src="js/auth.js"></script>
+    <!-- IMAGE GRID -->
+
+    <div class="dashboard-grid">
+
+        <div class="glass-card">
+            <img src="https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+        <div class="glass-card">
+            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop">
+        </div>
+
+    </div>
+
+    <!-- BIG BANNER -->
+
+    <div class="glass-card banner">
+
+        <img src="https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop">
+
+    </div>
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat-box">
+            <h2>31</h2>
+            <p>Active Projects</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>14</h2>
+            <p>Employees</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>420K</h2>
+            <p>Total Revenue</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>8</h2>
+            <p>Maintenance Tasks</p>
+        </div>
+
+    </div>
+
+</div>
+
 </body>
 </html>
