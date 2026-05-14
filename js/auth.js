@@ -1,14 +1,20 @@
 // --- 1. THE MENU BUILDER ---
 function buildMenu(userRole) {
     const menuContainer = document.getElementById('sideMenu');
-    if (!menuContainer) return;
+    if (!menuContainer) {
+        console.error("SIDEBAR ERROR: Could not find element with ID 'sideMenu'");
+        return;
+    }
 
-    // Permissions list uses lowercase keys
+    // Force role to lowercase to handle MANAGEMENT vs management
+    const cleanRole = (userRole || 'sales').toLowerCase().trim();
+    console.log("Building menu for role:", cleanRole);
+
     const rolePermissions = {
         'management': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'],
-        'manager': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'], // Included both just in case
-        'sales': ['main', 'sales', 'archive'],
+        'manager': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'],
         'operations': ['main', 'ops', 'storage', 'archive'],
+        'sales': ['main', 'sales', 'archive'],
         'storage': ['storage']
     };
 
@@ -23,11 +29,13 @@ function buildMenu(userRole) {
 
     menuContainer.innerHTML = ''; 
 
-    // CRITICAL FIX: Ensure the role used to look up permissions is lowercase
-    const allowedKeys = rolePermissions[userRole.toLowerCase()] || ['main'];
+    // Find keys - if role not found, default to 'sales' instead of empty
+    const allowedKeys = rolePermissions[cleanRole] || rolePermissions['sales'];
+    console.log("Allowed links for this role:", allowedKeys);
 
     allowedKeys.forEach(key => {
         const m = items[key];
+        if (!m) return;
         const isActive = window.location.pathname.includes(m.link) ? 'active' : '';
         
         menuContainer.innerHTML += `
@@ -40,25 +48,29 @@ function buildMenu(userRole) {
 // --- 2. AUTHENTICATION & SECURITY GUARD ---
 auth.onAuthStateChanged(user => {
     if (user) {
+        console.log("Firebase Auth detected user:", user.email);
+        
         db.collection("users").doc(user.uid).get().then((doc) => {
             if (doc.exists) {
                 const userData = doc.data();
-                
-                // Get the role and force it to lowercase for the Menu Builder
-                const rawRole = userData.role || 'sales';
-                const role = rawRole.toLowerCase(); 
+                const role = userData.role || 'sales';
+                console.log("Firestore Data Found:", userData);
                 
                 if(document.getElementById('userBadge')) {
-                    document.getElementById('userBadge').innerText = rawRole.toUpperCase();
+                    document.getElementById('userBadge').innerText = role.toUpperCase();
                 }
                 
                 buildMenu(role);
             } else {
-                console.error("No Firestore document found for UID:", user.uid);
-                buildMenu('sales'); // Fallback
+                console.warn("No Firestore document for UID:", user.uid, "- Creating default 'sales' menu.");
+                buildMenu('sales');
             }
-        }).catch(err => console.error("Database Error:", err));
+        }).catch(err => {
+            console.error("Firestore Error:", err);
+            buildMenu('sales'); // Fallback menu so it's never empty
+        });
     } else {
+        console.log("No user logged in. Redirecting...");
         if (!window.location.pathname.includes('login.html')) {
             window.location.href = 'login.html';
         }
