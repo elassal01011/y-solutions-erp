@@ -1,28 +1,69 @@
-// Function to load quotations into the table
-db.collection("quotations").orderBy("createdAt", "desc").onSnapshot(snapshot => {
-    const table = document.getElementById('quotationTable');
-    if (!table) return;
-    table.innerHTML = '';
+// --- 1. CALCULATE TOTALS DYNAMICALLY ---
+function calcQuotation() {
+    let subtotal = 0;
+    const items = [];
     
-    snapshot.forEach(doc => {
-        const data = doc.data();
-        // Add a safety check to make sure the data exists
-        if (!data) return;
-
-        table.innerHTML += `
-            <tr>
-                <td>${data.createdAt ? data.createdAt.toDate().toLocaleDateString() : 'Pending'}</td>
-                <td>${data.clientName || 'N/A'}</td>
-                <td>${data.total ? data.total.toLocaleString() : 0} EGP</td>
-                <td><span class="badge bg-info">${data.status || 'Pending'}</span></td>
-                <td>
-                    <button class="btn btn-sm btn-dark" onclick="printContract('${doc.id}')">Contract</button>
-                </td>
-            </tr>`;
+    // Find all inputs with the class 'device-qty'
+    document.querySelectorAll('.device-qty').forEach(input => {
+        const qty = parseInt(input.value) || 0;
+        const price = parseFloat(input.dataset.price) || 0;
+        const name = input.dataset.name;
+        
+        if (qty > 0) {
+            const lineTotal = qty * price;
+            subtotal += lineTotal;
+            items.push({ name: name, qty: qty, price: price, lineTotal: lineTotal });
+        }
     });
-}, error => {
-    console.error("QUOTATION ERROR:", error);
-    if(error.code === 'permission-denied') {
-        alert("Permission Denied: Check Firestore Rules!");
+    
+    const vat = subtotal * 0.14; // 14% Taxes
+    const total = subtotal + vat;
+
+    // Display the calculation in the modal (styled with your new violet colors)
+    const output = document.getElementById('quotationOutput');
+    if(output) {
+        output.innerHTML = `
+            <div class="alert mt-3" style="background-color: var(--violet-light); color: var(--violet-dark); border: none;">
+                Subtotal: ${subtotal.toLocaleString()} EGP <br>
+                VAT (14%): ${vat.toLocaleString()} EGP <br>
+                <strong>Total: ${total.toLocaleString()} EGP</strong>
+            </div>`;
     }
-});
+    
+    return { items, total };
+}
+
+// --- 2. SAVE BUTTON LOGIC (THE OPS LINK) ---
+async function saveQuotation() {
+    console.log("Save button clicked!"); // Debugging check
+
+    const data = calcQuotation();
+    const client = document.getElementById('cName').value.trim();
+    
+    // Validation Checks
+    if (!client) return alert("Please enter the client's name.");
+    if (data.items.length === 0) return alert("Please add at least one item (Qty > 0).");
+
+    // Temporarily disable the button so users don't click it twice
+    const btn = document.querySelector('button[onclick="saveQuotation()"]');
+    if(btn) btn.disabled = true;
+
+    try {
+        // This is the "Link" to Ops. We save it to the shared database.
+        await db.collection("quotations").add({
+            clientName: client,
+            items: data.items,
+            total: data.total,
+            status: "Pending", // Ops will see this status on their screen
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        alert("Success! Quotation saved and sent to Operations Pipeline.");
+        location.reload(); // Refresh to show in the table
+        
+    } catch (error) { 
+        console.error("Firebase Save Error:", error);
+        alert("Error connecting to database: " + error.message);
+        if(btn) btn.disabled = false; // Turn button back on if it failed
+    }
+}
