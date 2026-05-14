@@ -23,75 +23,80 @@
     <script src="firebase/config.js"></script>
     <script src="js/auth.js"></script>
     <script>
-        // Load projects that are NOT finished
-        db.collection("quotations").onSnapshot(snapshot => {
-            const table = document.getElementById('opsTable');
-            table.innerHTML = '';
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                if(data.status === 'Finished') return;
+       // --- 1. THE DATA LOADER ---
+// This listens to Firestore and builds the table automatically
+db.collection("quotations").onSnapshot(snapshot => {
+    const table = document.getElementById('opsTable');
+    if(!table) return;
+    table.innerHTML = '';
 
-                table.innerHTML += `
-                    <tr>
-                        <td>${doc.id.substring(0,5)}</td>
-                        <td>${data.clientName}</td>
-                        <td><span class="badge bg-info">${data.status}</span></td>
-                        <td>
-                            <select class="form-select form-select-sm" onchange="updateStatus('${doc.id}', this.value)">
-                                <option value="Pending" ${data.status==='Pending'?'selected':''}>Pending</option>
-                                <option value="On Work" ${data.status==='On Work'?'selected':''}>On Work</option>
-                                <option value="Finished">Mark as Finished</option>
-                            </select>
-                        </td>
-                    </tr>`;
-            });
-        });
+    snapshot.forEach(doc => {
+        const data = doc.data();
+        if(data.status === 'Finished') return; // Hide completed projects
 
-        async function updateStatus(id, newStatus) {
-            await db.collection("quotations").doc(id).update({ status: newStatus });
-            alert("Project updated to " + newStatus);
-        }
-        // Load only "Approved" or "Pending" projects
-db.collection("quotations").onSnapshot(snap => {
-    const container = document.getElementById('opsTable');
-    if(!container) return;
-    container.innerHTML = '';
-    snap.forEach(doc => {
-        const d = doc.data();
-        container.innerHTML += `
+        // Prepare the items list to pass into the function
+        const itemsJson = JSON.stringify(data.items || []);
+
+        table.innerHTML += `
             <tr>
-                <td>${d.clientName}</td>
-                <td>${d.status}</td>
+                <td>${doc.id.substring(0,5)}</td>
+                <td>${data.clientName}</td>
+                <td><span class="badge bg-info">${data.status}</span></td>
                 <td>
-                    <button class="btn btn-success btn-sm" onclick='deployProject("${doc.id}", ${JSON.stringify(d.items)})'>
-                        Deploy & Deduct Stock
-                    </button>
+                    <select class="form-select form-select-sm" 
+                            onchange='handleStatusChange("${doc.id}", this.value, ${itemsJson})'>
+                        <option value="Pending" ${data.status==='Pending'?'selected':''}>Pending</option>
+                        <option value="On Work" ${data.status==='On Work'?'selected':''}>On Work</option>
+                        <option value="Finished">Mark as Finished</option>
+                    </select>
                 </td>
             </tr>`;
     });
 });
 
-async function deployProject(id, items) {
-    if(!confirm("Deduct items from Warehouse and start installation?")) return;
+// --- 2. THE SMART UPDATER ---
+// This handles the logic when a status is changed
+async function handleStatusChange(id, newStatus, items) {
+    try {
+        // If status is "On Work", automatically deduct from Warehouse
+        if (newStatus === "On Work") {
+            const confirmStock = confirm("Are you sure? This will subtract these items from Storage inventory.");
+            if (!confirmStock) {
+                location.reload(); // Reset the dropdown if they cancel
+                return;
+            }
+            await deductStock(items);
+        }
 
+        // Update the database
+        await db.collection("quotations").doc(id).update({ 
+            status: newStatus,
+            lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Update Successful: Project is now " + newStatus);
+    } catch (error) {
+        console.error("Ops Error:", error);
+        alert("System Error: " + error.message);
+    }
+}
+
+// --- 3. THE STORAGE LINK ---
+// This speaks to the 'products' collection
+async function deductStock(items) {
     const batch = db.batch();
     
-    // 1. Deduct from Storage
     items.forEach(item => {
+        // Find product by name (Document ID must match item name)
         const productRef = db.collection("products").doc(item.name);
+        
+        // Subtract the quantity
         batch.update(productRef, {
             stock: firebase.firestore.FieldValue.increment(-item.qty)
         });
     });
 
-    // 2. Update Status
-    const quoteRef = db.collection("quotations").doc(id);
-    batch.update(quoteRef, { status: "Operating/In Progress" });
-
-    try {
-        await batch.commit();
-        alert("Success! Storage updated and Ops started.");
-    } catch (e) { alert("Stock Error: Make sure product names match exactly!"); }
+    return batch.commit();
 }
     </script>
 </body>
