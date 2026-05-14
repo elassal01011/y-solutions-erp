@@ -1,75 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard</title>
-
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-
-<body>
-
-<div class="sidebar glass-card">
-
-<div class="logo-section">
-<img src="https://i.imgur.com/Q5oJXGx.png" class="logo">
-
-<div class="role-badge">
-MANAGEMENT
-</div>
-</div>
-
-<div class="menu">
-
-<a href="dashboard.html">
-<i class="fa-solid fa-chart-line"></i>
-Dashboard
-</a>
-
-<a href="quotations.html">
-<i class="fa-solid fa-file-invoice"></i>
-Quotations
-</a>
-
-<a href="warehouse.html">
-<i class="fa-solid fa-warehouse"></i>
-Warehouse
-</a>
-
-<a href="employees.html">
-<i class="fa-solid fa-users"></i>
-Employees
-</a>
-
-<a href="maintenance.html">
-<i class="fa-solid fa-screwdriver-wrench"></i>
-Maintenance
-</a>
-
-<a href="finance.html">
-<i class="fa-solid fa-money-bill"></i>
-Finance
-</a>
-
-</div>
-
-<button class="logout-btn" onclick="logout()">
-Logout
-</button>
-
-</div>
-
 <div class="main-content">
 
 <div class="topbar">
 <h1>Enterprise Dashboard</h1>
+
 <div class="top-icons">
-<i class="fa-solid fa-bell"></i>
-<i class="fa-solid fa-user"></i>
+
+<button id="themeToggle" class="theme-btn">
+<i class="fa-solid fa-moon"></i>
+</button>
+
+<button class="theme-btn mobile-btn" onclick="toggleSidebar()">
+<i class="fa-solid fa-bars"></i>
+</button>
+
 </div>
+
 </div>
 
 <div class="dashboard-grid">
@@ -91,7 +37,7 @@ Logout
 <div class="stats-grid">
 
 <div class="stat-box glass-card">
-<h2>420K</h2>
+<h2 id="revenue">420K</h2>
 <p>Total Revenue</p>
 </div>
 
@@ -118,21 +64,14 @@ Logout
 
 </div>
 
-<script>
-const ctx = document.getElementById('salesChart');
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-        datasets: [{
-            label: 'Revenue',
-            data: [12000,25000,18000,32000,45000,60000],
-            tension:0.4
-        }]
-    }
-});
-</script>
+<script src="firebase/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
 
 </body>
 </html>
