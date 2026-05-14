@@ -1,18 +1,17 @@
 // --- 1. THE MENU BUILDER ---
-// This function creates links based on the user's role
 function buildMenu(userRole) {
     const menuContainer = document.getElementById('sideMenu');
     if (!menuContainer) return;
 
-    // Define permissions for each role
-  // Change 'management' to 'manager' here to match your database
-const rolePermissions = {
-    'manager': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'], // Updated this line
-    'sales': ['main', 'sales', 'archive'],
-    'operations': ['main', 'ops', 'storage', 'archive'],
-    'storage': ['storage']
-};
-    // Define the link details (icon, label, and file name)
+    // Permissions list uses lowercase keys
+    const rolePermissions = {
+        'management': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'],
+        'manager': ['main', 'sales', 'ops', 'storage', 'archive', 'hr'], // Included both just in case
+        'sales': ['main', 'sales', 'archive'],
+        'operations': ['main', 'ops', 'storage', 'archive'],
+        'storage': ['storage']
+    };
+
     const items = {
         main: { icon: 'fa-chart-pie', label: 'Dashboard', link: 'dashboard.html' },
         sales: { icon: 'fa-plus-circle', label: 'New Quotation', link: 'quotations.html' },
@@ -22,14 +21,13 @@ const rolePermissions = {
         hr: { icon: 'fa-users', label: 'Staff Mgmt', link: 'employees.html' }
     };
 
-    menuContainer.innerHTML = ''; // Clear old menu
+    menuContainer.innerHTML = ''; 
 
-    // Get the specific keys for this user's role
-    const allowedKeys = rolePermissions[userRole] || ['main'];
+    // CRITICAL FIX: Ensure the role used to look up permissions is lowercase
+    const allowedKeys = rolePermissions[userRole.toLowerCase()] || ['main'];
 
     allowedKeys.forEach(key => {
         const m = items[key];
-        // Check if this is the current page to highlight it
         const isActive = window.location.pathname.includes(m.link) ? 'active' : '';
         
         menuContainer.innerHTML += `
@@ -42,34 +40,35 @@ const rolePermissions = {
 // --- 2. AUTHENTICATION & SECURITY GUARD ---
 auth.onAuthStateChanged(user => {
     if (user) {
-        // If logged in, get their role from Firestore
         db.collection("users").doc(user.uid).get().then((doc) => {
             if (doc.exists) {
                 const userData = doc.data();
-                const role = userData.role || 'sales'; // Default role
                 
-                // Update UI elements
+                // Get the role and force it to lowercase for the Menu Builder
+                const rawRole = userData.role || 'sales';
+                const role = rawRole.toLowerCase(); 
+                
                 if(document.getElementById('userBadge')) {
-                    document.getElementById('userBadge').innerText = role.toUpperCase();
+                    document.getElementById('userBadge').innerText = rawRole.toUpperCase();
                 }
                 
-                // Build the sidebar
                 buildMenu(role);
+            } else {
+                console.error("No Firestore document found for UID:", user.uid);
+                buildMenu('sales'); // Fallback
             }
-        });
+        }).catch(err => console.error("Database Error:", err));
     } else {
-        // If not logged in, redirect to login page
         if (!window.location.pathname.includes('login.html')) {
             window.location.href = 'login.html';
         }
     }
 });
 
-// --- 3. LOGIN & LOGOUT FUNCTIONS ---
+// --- 3. LOGIN & LOGOUT ---
 function login() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-
     auth.signInWithEmailAndPassword(email, password)
         .then(() => { window.location.href = 'dashboard.html'; })
         .catch(err => alert(err.message));
