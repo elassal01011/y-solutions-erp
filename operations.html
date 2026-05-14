@@ -51,6 +51,48 @@
             await db.collection("quotations").doc(id).update({ status: newStatus });
             alert("Project updated to " + newStatus);
         }
+        // Load only "Approved" or "Pending" projects
+db.collection("quotations").onSnapshot(snap => {
+    const container = document.getElementById('opsTable');
+    if(!container) return;
+    container.innerHTML = '';
+    snap.forEach(doc => {
+        const d = doc.data();
+        container.innerHTML += `
+            <tr>
+                <td>${d.clientName}</td>
+                <td>${d.status}</td>
+                <td>
+                    <button class="btn btn-success btn-sm" onclick='deployProject("${doc.id}", ${JSON.stringify(d.items)})'>
+                        Deploy & Deduct Stock
+                    </button>
+                </td>
+            </tr>`;
+    });
+});
+
+async function deployProject(id, items) {
+    if(!confirm("Deduct items from Warehouse and start installation?")) return;
+
+    const batch = db.batch();
+    
+    // 1. Deduct from Storage
+    items.forEach(item => {
+        const productRef = db.collection("products").doc(item.name);
+        batch.update(productRef, {
+            stock: firebase.firestore.FieldValue.increment(-item.qty)
+        });
+    });
+
+    // 2. Update Status
+    const quoteRef = db.collection("quotations").doc(id);
+    batch.update(quoteRef, { status: "Operating/In Progress" });
+
+    try {
+        await batch.commit();
+        alert("Success! Storage updated and Ops started.");
+    } catch (e) { alert("Stock Error: Make sure product names match exactly!"); }
+}
     </script>
 </body>
 </html>
