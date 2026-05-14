@@ -1,34 +1,84 @@
-:root { --gold: #d4af37; --dark: #0f0f0f; --light-bg: #f4f5f7; }
-
-body { background: var(--light-bg); font-family: 'Segoe UI', sans-serif; margin: 0; }
-
-.sidebar {
-    position: fixed; width: 260px; height: 100vh; background: var(--dark);
-    color: white; padding: 30px;
+:root { 
+    --violet-dark: #662D91; 
+    --violet-light: #E0CEEB; 
+    --violet-bg: #F9F6FB; /* Very light violet/off-white for the main background */
+    --white: #ffffff;
+    --text-dark: #333333;
 }
 
-.sidebar h3 { color: var(--gold); margin-bottom: 40px; font-weight: bold; }
+body { 
+    background: var(--violet-bg); 
+    font-family: 'Segoe UI', sans-serif; 
+    margin: 0; 
+    color: var(--text-dark);
+}
+
+/* SIDEBAR STYLES */
+.sidebar {
+    position: fixed; 
+    width: 260px; 
+    height: 100vh; 
+    background: var(--violet-light); /* Changed from dark to soft violet */
+    color: var(--violet-dark); 
+    padding: 30px;
+    border-right: 1px solid rgba(102, 45, 145, 0.1);
+}
+
+.sidebar h3, .sidebar h4 { 
+    color: var(--violet-dark); /* Replaced gold */
+    margin-bottom: 40px; 
+    font-weight: bold; 
+}
 
 .sidebar a {
-    display: block; color: #ccc; text-decoration: none;
-    margin-bottom: 20px; transition: 0.3s;
+    display: block; 
+    color: var(--violet-dark); /* Dark violet links instead of grey */
+    text-decoration: none;
+    margin-bottom: 10px; 
+    transition: 0.3s;
+    font-weight: 500;
+    padding: 12px 15px;
+    border-radius: 8px; /* Rounded corners for the menu items */
 }
 
-.sidebar a:hover, .sidebar a.active { color: var(--gold); padding-left: 10px; }
+/* Modern block-style hover effect */
+.sidebar a:hover, .sidebar a.active { 
+    background: var(--violet-dark);
+    color: var(--white) !important; 
+    padding-left: 20px; 
+}
 
-.main-content { margin-left: 260px; padding: 40px; }
+/* MAIN CONTENT */
+.main-content { 
+    margin-left: 260px; 
+    padding: 40px; 
+}
 
 .stat-card {
-    background: white; border-radius: 15px; padding: 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 5px solid var(--gold);
+    background: var(--white); 
+    border-radius: 15px; 
+    padding: 25px;
+    /* Soft purple shadow instead of harsh grey */
+    box-shadow: 0 4px 15px rgba(102, 45, 145, 0.08); 
+    border-left: 5px solid var(--violet-dark); /* Replaced gold border */
 }
 
+/* LOGIN PAGE */
 .login-body {
-    background: linear-gradient(135deg, #000, #222);
-    height: 100vh; display: flex; justify-content: center; align-items: center;
+    /* Fresh violet gradient instead of the dark black gradient */
+    background: linear-gradient(135deg, var(--violet-bg), var(--violet-light));
+    height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
 }
 
 .login-card {
-    width: 380px; background: white; padding: 40px; border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    width: 380px; 
+    background: var(--white); 
+    padding: 40px; 
+    border-radius: 20px;
+    /* Modern, soft elevated shadow */
+    box-shadow: 0 10px 30px rgba(102, 45, 145, 0.15);
+    border: 1px solid rgba(102, 45, 145, 0.2);
 }
