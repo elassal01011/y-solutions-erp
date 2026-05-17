@@ -1,18 +1,58 @@
-const ctx = document.getElementById('salesChart');
+import { db, auth } from './config.js';
 
-if(ctx){
+import {
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-        datasets: [{
-            label: 'Revenue',
-            data: [12000,25000,18000,32000,45000,60000],
-            tension:0.4,
-            fill:true
-        }]
-    }
-});
+import {
+signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const ordersTable = document.getElementById('ordersTable');
+
+async function loadDashboard(){
+
+    const ordersSnapshot = await getDocs(collection(db,'orders'));
+
+    document.getElementById('totalOrders').innerText = ordersSnapshot.size;
+
+    let pending = 0;
+
+    ordersSnapshot.forEach((doc)=>{
+
+        const data = doc.data();
+
+        if(data.status === 'Pending'){
+            pending++;
+        }
+
+        ordersTable.innerHTML += `
+        <tr>
+            <td>${data.client}</td>
+            <td>${data.status}</td>
+            <td>${data.total} EGP</td>
+        </tr>
+        `;
+
+    });
+
+    document.getElementById('pendingProjects').innerText = pending;
+
+    const employeesSnapshot = await getDocs(collection(db,'users'));
+
+    document.getElementById('totalEmployees').innerText = employeesSnapshot.size;
 
 }
+
+loadDashboard();
+
+const logoutBtn = document.getElementById('logoutBtn');
+
+logoutBtn.addEventListener('click', async()=>{
+
+    await signOut(auth);
+
+    window.location.href='login.html';
+
+});
