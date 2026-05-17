@@ -1,30 +1,66 @@
-<div class="main-content">
-    <h2>Staff Management</h2>
-    <div class="card p-4 mb-4">
-        <h6>Register New Employee</h6>
-        <div class="row g-2">
-            <div class="col-md-5"><input id="staffName" class="form-control" placeholder="Full Name"></div>
-            <div class="col-md-4">
-                <select id="staffRole" class="form-select">
-                    <option value="sales">Sales</option>
-                    <option value="operations">Operations</option>
-                    <option value="storage">Storage</option>
-                    <option value="management">Management</option>
-                </select>
-            </div>
-            <div class="col-md-3"><button class="btn btn-warning w-100" onclick="addStaff()">Add Staff</button></div>
-        </div>
-    </div>
-    <div class="card p-4"><table class="table"><tbody id="staffList"></tbody></table></div>
+<!DOCTYPE html>
+</head>
+<body>
+
+<div class="sidebar">
+<h2>Employees</h2>
 </div>
 
-<script>
-    async function addStaff() {
-        const name = document.getElementById('staffName').value;
-        const role = document.getElementById('staffRole').value;
-        // In a real app, you'd use the user's UID after they sign up
-        // For now, we save by Name for your directory
-        await db.collection("users").add({ name, role });
-        alert("Staff Added!");
-    }
+<div class="main">
+
+<div class="card">
+
+<h2>Staff Accounts</h2>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody id="employeesTable"></tbody>
+</table>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { db } from './js/config.js';
+
+import {
+collection,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const table = document.getElementById('employeesTable');
+
+async function load(){
+
+const snapshot = await getDocs(collection(db,'users'));
+
+snapshot.forEach((doc)=>{
+
+const data = doc.data();
+
+ table.innerHTML += `
+ <tr>
+ <td>${data.name}</td>
+ <td>${data.email}</td>
+ <td>${data.role}</td>
+ </tr>
+ `;
+
+});
+
+}
+
+load();
+
 </script>
+
+</body>
+</html>
