@@ -1,69 +1,76 @@
-// --- 1. CALCULATE TOTALS DYNAMICALLY ---
-function calcQuotation() {
-    let subtotal = 0;
-    const items = [];
-    
-    // Find all inputs with the class 'device-qty'
-    document.querySelectorAll('.device-qty').forEach(input => {
-        const qty = parseInt(input.value) || 0;
-        const price = parseFloat(input.dataset.price) || 0;
-        const name = input.dataset.name;
-        
-        if (qty > 0) {
-            const lineTotal = qty * price;
-            subtotal += lineTotal;
-            items.push({ name: name, qty: qty, price: price, lineTotal: lineTotal });
-        }
+import { db } from './config.js';
+
+    return 700;
+}
+
+const addItemBtn = document.getElementById('addItem');
+
+addItemBtn.addEventListener('click',()=>{
+
+    const itemName = itemsSelect.value;
+    const qty = Number(document.getElementById('qty').value);
+
+    const selected = allItems.find(i=>i.name===itemName);
+
+    const itemTotal = qty * selected.price;
+
+    quotationItems.push({
+        item:itemName,
+        qty,
+        price:selected.price,
+        total:itemTotal
     });
-    
-    const vat = subtotal * 0.14; // 14% Taxes
-    const total = subtotal + vat;
 
-    // Display the calculation in the modal (styled with your new violet colors)
-    const output = document.getElementById('quotationOutput');
-    if(output) {
-        output.innerHTML = `
-            <div class="alert mt-3" style="background-color: var(--violet-light); color: var(--violet-dark); border: none;">
-                Subtotal: ${subtotal.toLocaleString()} EGP <br>
-                VAT (14%): ${vat.toLocaleString()} EGP <br>
-                <strong>Total: ${total.toLocaleString()} EGP</strong>
-            </div>`;
-    }
-    
-    return { items, total };
+    total += itemTotal;
+
+    quotationTable.innerHTML += `
+    <tr>
+        <td>${itemName}</td>
+        <td>${qty}</td>
+        <td>${selected.price}</td>
+        <td>${itemTotal}</td>
+    </tr>
+    `;
+
+    updateTotal();
+
+});
+
+function updateTotal(){
+
+    const vat = Number(document.getElementById('vat').value);
+    const installation = Number(document.getElementById('installation').value);
+
+    const city = document.getElementById('clientCity').value;
+
+    const delivery = cityDelivery(city);
+
+    const vatValue = total * vat / 100;
+
+    const grand = total + vatValue + installation + delivery;
+
+    document.getElementById('grandTotal').innerText = `Grand Total: ${grand} EGP`;
+
 }
 
-// --- 2. SAVE BUTTON LOGIC (THE OPS LINK) ---
-async function saveQuotation() {
-    console.log("Save button clicked!"); // Debugging check
+const saveBtn = document.getElementById('saveQuotation');
 
-    const data = calcQuotation();
-    const client = document.getElementById('cName').value.trim();
-    
-    // Validation Checks
-    if (!client) return alert("Please enter the client's name.");
-    if (data.items.length === 0) return alert("Please add at least one item (Qty > 0).");
+saveBtn.addEventListener('click', async()=>{
 
-    // Temporarily disable the button so users don't click it twice
-    const btn = document.querySelector('button[onclick="saveQuotation()"]');
-    if(btn) btn.disabled = true;
+    const client = document.getElementById('clientName').value;
+    const phone = document.getElementById('clientPhone').value;
 
-    try {
-        // This is the "Link" to Ops. We save it to the shared database.
-        await db.collection("quotations").add({
-            clientName: client,
-            items: data.items,
-            total: data.total,
-            status: "Pending", // Ops will see this status on their screen
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        alert("Success! Quotation saved and sent to Operations Pipeline.");
-        location.reload(); // Refresh to show in the table
-        
-    } catch (error) { 
-        console.error("Firebase Save Error:", error);
-        alert("Error connecting to database: " + error.message);
-        if(btn) btn.disabled = false; // Turn button back on if it failed
-    }
-}
+    await addDoc(collection(db,'orders'),{
+
+        client,
+        phone,
+        items:quotationItems,
+        total,
+        status:'Pending',
+        createdAt:new Date()
+
+    });
+
+    alert('Quotation Saved');
+
+});
