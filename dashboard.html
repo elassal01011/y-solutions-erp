@@ -1,197 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Y SOLUTIONS ERP</title>
-
-<link rel="stylesheet" href="css/style.css">
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>Y SOLUTIONS</h2>
 
-<div class="sidebar glass-card" id="sidebar">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="quotation.html">Quotation</a>
+    <a href="operations.html">Operations</a>
+    <a href="warehouse.html">Warehouse</a>
+    <a href="employees.html">Employees</a>
 
-<div class="logo-section">
-
-<img src="https://i.imgur.com/Q5oJXGx.png" class="logo">
-
-<div class="role-badge">
-MANAGEMENT
+    <button id="logoutBtn">Logout</button>
 </div>
 
-</div>
+<div class="main">
 
-<!-- IMPORTANT FIX -->
-<div class="menu" id="sideMenu">
+    <div class="grid">
 
-<a href="dashboard.html">
-<i class="fa-solid fa-chart-line"></i>
-Dashboard
-</a>
+        <div class="card">
+            <h3>Total Orders</h3>
+            <h1 id="totalOrders">0</h1>
+        </div>
 
-<a href="#">
-<i class="fa-solid fa-file-invoice"></i>
-Quotations
-</a>
+        <div class="card">
+            <h3>Pending Projects</h3>
+            <h1 id="pendingProjects">0</h1>
+        </div>
 
-<a href="#">
-<i class="fa-solid fa-warehouse"></i>
-Warehouse
-</a>
+        <div class="card">
+            <h3>Total Employees</h3>
+            <h1 id="totalEmployees">0</h1>
+        </div>
 
-<a href="#">
-<i class="fa-solid fa-users"></i>
-Employees
-</a>
+    </div>
 
-<a href="#">
-<i class="fa-solid fa-screwdriver-wrench"></i>
-Maintenance
-</a>
+    <div class="card">
+        <h2>Recent Orders</h2>
 
-<a href="#">
-<i class="fa-solid fa-money-bill"></i>
-Finance
-</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTable"></tbody>
+        </table>
 
-</div>
-
-<button class="logout-btn" onclick="logout()">
-Logout
-</button>
+    </div>
 
 </div>
 
-<!-- MAIN CONTENT -->
-
-<div class="main-content">
-
-<div class="topbar">
-
-<h1>Enterprise Dashboard</h1>
-
-<div class="top-icons">
-
-<button id="themeToggle" class="theme-btn">
-<i class="fa-solid fa-moon"></i>
-</button>
-
-<button class="theme-btn mobile-btn"
-onclick="toggleSidebar()">
-
-<i class="fa-solid fa-bars"></i>
-
-</button>
-
-</div>
-
-</div>
-
-<!-- GRID -->
-
-<div class="dashboard-grid">
-
-<div class="glass-card image-card">
-
-<img src="https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop">
-
-</div>
-
-<div class="glass-card image-card">
-
-<img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop">
-
-</div>
-
-</div>
-
-<!-- BANNER -->
-
-<div class="glass-card banner-card">
-
-<img src="https://images.unsplash.com/photo-1558002038-1055907df827?q=80&w=1200&auto=format&fit=crop">
-
-</div>
-
-<!-- STATS -->
-
-<div class="stats-grid">
-
-<div class="stat-box glass-card">
-
-<h2 id="revenue">420K</h2>
-
-<p>Total Revenue</p>
-
-</div>
-
-<div class="stat-box glass-card">
-
-<h2 id="stat-projects">31</h2>
-
-<p>Projects</p>
-
-</div>
-
-<div class="stat-box glass-card">
-
-<h2 id="stat-employees">14</h2>
-
-<p>Employees</p>
-
-</div>
-
-<div class="stat-box glass-card">
-
-<h2>8</h2>
-
-<p>Maintenance</p>
-
-</div>
-
-</div>
-
-<!-- CHART -->
-
-<div class="chart-section glass-card">
-
-<canvas id="salesChart"></canvas>
-
-</div>
-
-</div>
-
-<!-- FIREBASE -->
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
-<!-- CONFIG -->
-
-<script src="firebase/config.js"></script>
-
-<!-- JS FILES -->
-
-<script src="js/auth.js"></script>
-
-<script src="js/db.js"></script>
-
-<script src="js/app.js"></script>
-
+<script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
