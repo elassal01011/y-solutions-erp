@@ -1,70 +1,48 @@
-// 1. SAVE DATA: Function to add a new item to Firebase
-async function addNewItem() {
-    const name = document.getElementById('itemName').value;
-    const stock = document.getElementById('itemStock').value;
-    const price = document.getElementById('itemPrice').value;
+import { db } from './config.js';
 
-    if (!name || !stock || !price) {
-        alert("Please fill all fields");
-        return;
-    }
+import {
+collection,
+addDoc,
+getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    try {
-        await db.collection("products").add({
-            name: name,
-            stock: parseInt(stock),
-            price: parseFloat(price),
-            lastUpdated: new Date().toLocaleString()
-        });
+const saveBtn = document.getElementById('saveItem');
+const table = document.getElementById('warehouseTable');
 
-        // Hide the popup
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addItemModal'));
-        modal.hide();
-        
-        // Reset fields
-        document.getElementById('itemName').value = "";
-        document.getElementById('itemStock').value = "";
-        document.getElementById('itemPrice').value = "";
+saveBtn.addEventListener('click', async()=>{
 
-    } catch (error) {
-        alert("Error saving: " + error.message);
-    }
+const name = document.getElementById('itemName').value;
+const price = Number(document.getElementById('itemPrice').value);
+const qty = Number(document.getElementById('itemQty').value);
+
+await addDoc(collection(db,'warehouse'),{
+name,
+price,
+qty
+});
+
+alert('Item Added');
+
+});
+
+async function load(){
+
+const snapshot = await getDocs(collection(db,'warehouse'));
+
+snapshot.forEach((doc)=>{
+
+const data = doc.data();
+
+ table.innerHTML += `
+ <tr>
+ <td>${data.name}</td>
+ <td>${data.price}</td>
+ <td>${data.qty}</td>
+ </tr>
+ `;
+
+});
+
 }
 
-// 2. DISPLAY DATA: Listen to Firebase for real-time changes
-function loadWarehouse() {
-    db.collection("products").onSnapshot((snapshot) => {
-        const tableBody = document.getElementById("warehouseTable");
-        if (!tableBody) return;
-
-        tableBody.innerHTML = ""; // Clear the table first
-        
-        snapshot.forEach((doc) => {
-            const item = doc.data();
-            const statusClass = item.stock < 5 ? "bg-danger" : "bg-success";
-            const statusText = item.stock < 5 ? "Low Stock" : "Available";
-
-            tableBody.innerHTML += `
-                <tr>
-                    <td><strong>${item.name}</strong></td>
-                    <td>${item.stock} Units</td>
-                    <td>${item.price} EGP</td>
-                    <td><span class="badge ${statusClass}">${statusText}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-danger" onclick="deleteItem('${doc.id}')">Delete</button>
-                    </td>
-                </tr>
-            `;
-        });
-    });
-}
-
-// 3. DELETE DATA: Remove item from cloud
-async function deleteItem(id) {
-    if(confirm("Delete this item forever?")) {
-        await db.collection("products").doc(id).delete();
-    }
-}
-
-// Start the listener when the page opens
-loadWarehouse();
+load();
