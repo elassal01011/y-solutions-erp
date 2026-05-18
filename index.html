@@ -1,10 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta http-equiv="refresh" content="0; url=login.html">
-    <title>Y SOLUTIONS ERP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Y-Solutions ERP</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
-<body style="background: #000;">
-    <h1 style="color: gold; text-align: center; margin-top: 20%;">Loading Y-Solutions...</h1>
+<body>
+
+    <div id="login-screen" class="screen">
+        <div class="login-box">
+            <h2>Y-Solutions ERP</h2>
+            <p style="color:#7f8c8d; font-size:0.85em; margin-bottom:15px;">Staff Access Portal</p>
+            <input type="email" id="email" placeholder="Email Address" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button onclick="login()">Authenticate</button>
+            <p id="login-error" class="error"></p>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="screen hidden">
+        <div class="sidebar">
+            <h2>Y-Solutions</h2>
+            <p id="user-info"></p>
+            <p id="user-role-badge" class="role-badge"></p>
+            <hr style="border-color:rgba(255,255,255,0.1); margin: 15px 0;">
+            <nav id="nav-menu"></nav>
+            <button onclick="logout()" class="logout-btn">Log Out</button>
+        </div>
+
+        <div class="main-content">
+            
+            <section id="sec-dashboard" class="module hidden">
+                <h3>Executive Dashboard Overview</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <small>Total Historical Revenue</small>
+                        <p>3,905,747 EGP</p>
+                    </div>
+                    <div class="stat-card" style="background:#2ecc71;">
+                        <small>Total Net Profits</small>
+                        <p>1,029,876 EGP</p>
+                    </div>
+                </div>
+                <br>
+                <h4>Monthly Operational Breakdown</h4>
+                <div class="table-container">
+                    <table id="revenue-table">
+                        <thead>
+                            <tr><th>Month</th><th>Projects Completed</th><th>Revenue</th><th>Profit</th></tr>
+                        </thead>
+                        <tbody id="revenue-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sec-quotation" class="module hidden">
+                <h3>Professional Automation Quotation Engine</h3>
+                <div class="form-group-grid">
+                    <div>
+                        <label>Client Name</label>
+                        <input type="text" id="client-name" placeholder="John Doe">
+                    </div>
+                    <div>
+                        <label>Destination City (Controls Shipping / Logistics)</label>
+                        <select id="client-city">
+                            <option value="Cairo">Cairo (200 EGP)</option>
+                            <option value="Giza">Giza (200 EGP)</option>
+                            <option value="Alexandria">Alexandria (300 EGP)</option>
+                            <option value="New Capital">New Capital (400 EGP)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="quotation-builder-box">
+                    <h4>Add Line Item From Inventory Pool</h4>
+                    <div class="form-group">
+                        <select id="item-select" style="flex: 2;"></select>
+                        <input type="number" id="item-qty" placeholder="Qty" min="1" value="1" style="flex: 0.5;">
+                        <button onclick="addItemToQuote()" style="flex: 0.8;">Add Item</button>
+                    </div>
+                </div>
+                
+                <table id="quote-table">
+                    <thead>
+                        <tr><th>Item Specs</th><th>Brand</th><th>Unit Base</th><th>Qty</th><th>Subtotal</th></tr>
+                    </thead>
+                    <tbody id="quote-body"></tbody>
+                </table>
+                
+                <div class="quote-totals">
+                    <p>Subtotal Items Base: <span id="subtotal">0.00</span> EGP</p>
+                    <p>Automated Installation Fees (15%): <span id="install-fee">0.00</span> EGP</p>
+                    <p>Logistics & Delivery Expenses: <span id="delivery-fee">0.00</span> EGP</p>
+                    <p>Government Tax Structure (14% VAT): <span id="vat-fee">0.00</span> EGP</p>
+                    <hr style="margin: 10px 0; border-color:#ddd;">
+                    <h3>Total Invoice Cost: <span id="grand-total">0.00</span> EGP</h3>
+                    <br>
+                    <button class="action-btn" id="btn-submit-order" onclick="submitOrder()">Commit Order Configuration</button>
+                </div>
+            </section>
+
+            <section id="sec-operations" class="module hidden">
+                <h3>Operations Routing Management</h3>
+                <div class="table-container">
+                    <table id="ops-projects-table">
+                        <thead>
+                            <tr><th>ID</th><th>City Location</th><th>Size (m²)</th><th>Devices Count</th><th>Status Controls</th></tr>
+                        </thead>
+                        <tbody id="ops-projects-body"></tbody>
+                    </table>
+                </div>
+                <br>
+                <div class="maintenance-box">
+                    <h4>File Global Maintenance Request Packet</h4>
+                    <input type="text" id="maint-client" placeholder="Client Name Lookup / ID Reference">
+                    <textarea id="maint-desc" placeholder="Detail hardware diagnostics / servicing requested data..." rows="3"></textarea>
+                    <button class="action-btn" onclick="submitMaintenance()">Dispatch Maintenance File</button>
+                </div>
+            </section>
+
+            <section id="sec-storage" class="module hidden">
+                <h3>Storage Vault Control Panel</h3>
+                <div class="add-hardware-box" id="storage-write-box">
+                    <h4>Register Material Intake to Core Catalog</h4>
+                    <div class="form-group-grid">
+                        <input type="text" id="new-item-name" placeholder="Device Label (e.g. Device_301)">
+                        <input type="text" id="new-item-brand" placeholder="Manufacturer (e.g. Shelly)">
+                        <select id="new-item-cat">
+                            <option>Camera</option><option>Controller</option><option>Plug</option>
+                            <option>Relay</option><option>Sensor</option><option>Switch</option>
+                        </select>
+                        <input type="number" id="new-item-price" placeholder="Base Unit Cost (EGP)">
+                    </div>
+                    <button class="action-btn" onclick="addNewInventoryItem()">Authorize and Inject Item Data</button>
+                </div>
+                <br>
+                <h4>Live Available Storage Catalog</h4>
+                <div class="table-container">
+                    <table id="storage-table">
+                        <thead>
+                            <tr><th>ID</th><th>Category</th><th>Model Designation</th><th>Brand</th><th>Price Base</th></tr>
+                        </thead>
+                        <tbody id="storage-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sec-hr" class="module hidden">
+                <h3>Human Resources Directory</h3>
+                <p style="margin-bottom:15px; color:#7f8c8d;">Authorized System Access Authorization Logs</p>
+                <table id="hr-staff-table">
+                    <thead>
+                        <tr><th>Employee Identity Record</th><th>Dynamic Framework Clearance Access Role</th></tr>
+                    </thead>
+                    <tbody id="hr-staff-body">
+                        </tbody>
+                </table>
+            </section>
+
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
