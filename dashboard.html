@@ -1,62 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8"><title>Executive Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
+    <script src="analytics.js"></script>
+    <script src="dashboard.js"></script>
 </head>
-<body>
-
-<div class="sidebar">
-    <h2>Y SOLUTIONS</h2>
-
-    <a href="dashboard.html">Dashboard</a>
-    <a href="quotation.html">Quotation</a>
-    <a href="operations.html">Operations</a>
-    <a href="warehouse.html">Warehouse</a>
-    <a href="employees.html">Employees</a>
-
-    <button id="logoutBtn">Logout</button>
-</div>
-
-<div class="main">
-
-    <div class="grid">
-
-        <div class="card">
-            <h3>Total Orders</h3>
-            <h1 id="totalOrders">0</h1>
+<body style="display:none;">
+    <div class="sidebar" id="sidebar-container"></div>
+    <div class="main-wrapper">
+        <div class="module-container">
+            <h3>Executive Operations Dashboard</h3>
+            <div class="stats-grid">
+                <div class="stat-card"><small>Gross Dataset Revenue</small><p>3,905,747 EGP</p></div>
+                <div class="stat-card profit-card"><small>Net Revenue Profit</small><p>1,029,876 EGP</p></div>
+            </div>
+            <h4>Monthly Financial Trajectory</h4>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Fiscal Month</th><th>Completed Contracts</th><th>Invoiced Yield</th><th>Net Margin</th></tr></thead>
+                    <tbody id="revenue-table-body"></tbody>
+                </table>
+            </div>
         </div>
-
-        <div class="card">
-            <h3>Pending Projects</h3>
-            <h1 id="pendingProjects">0</h1>
-        </div>
-
-        <div class="card">
-            <h3>Total Employees</h3>
-            <h1 id="totalEmployees">0</h1>
-        </div>
-
     </div>
-
-    <div class="card">
-        <h2>Recent Orders</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Client</th>
-                    <th>Status</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody id="ordersTable"></tbody>
-        </table>
-
-    </div>
-
-</div>
-
-<script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
