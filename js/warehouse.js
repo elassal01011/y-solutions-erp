@@ -1,48 +1,41 @@
-import { db } from './config.js';
+// Storage Control Panel Framework Logic
+window.onload = () => {
+    checkAccessControl(["Manager", "Storage"]);
+    renderInventoryTable();
+};
 
-import {
-collection,
-addDoc,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const saveBtn = document.getElementById('saveItem');
-const table = document.getElementById('warehouseTable');
-
-saveBtn.addEventListener('click', async()=>{
-
-const name = document.getElementById('itemName').value;
-const price = Number(document.getElementById('itemPrice').value);
-const qty = Number(document.getElementById('itemQty').value);
-
-await addDoc(collection(db,'warehouse'),{
-name,
-price,
-qty
-});
-
-alert('Item Added');
-
-});
-
-async function load(){
-
-const snapshot = await getDocs(collection(db,'warehouse'));
-
-snapshot.forEach((doc)=>{
-
-const data = doc.data();
-
- table.innerHTML += `
- <tr>
- <td>${data.name}</td>
- <td>${data.price}</td>
- <td>${data.qty}</td>
- </tr>
- `;
-
-});
-
+function renderInventoryTable() {
+    const tbody = document.getElementById('warehouse-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+    GLOBAL_HARDWARE_CATALOG.forEach(h => {
+        tbody.innerHTML += `<tr>
+            <td>#${h.id}</td>
+            <td>${h.category}</td>
+            <td><b>${h.name}</b></td>
+            <td>${h.brand}</td>
+            <td>${h.price} EGP</td>
+        </tr>`;
+    });
 }
 
-load();
+function commitNewHardwareItem() {
+    const name = document.getElementById('wh-name').value;
+    const brand = document.getElementById('wh-brand').value;
+    const category = document.getElementById('wh-cat').value;
+    const price = parseInt(document.getElementById('wh-price').value);
+
+    if (!name || !brand || !price) return alert("Fill in product specifications parameters.");
+
+    const generatedId = GLOBAL_HARDWARE_CATALOG.length + 100;
+    const newAsset = { id: generatedId, category: category, name: name, brand: brand, price: price };
+
+    GLOBAL_HARDWARE_CATALOG.push(newAsset);
+    db.collection('inventory_pool').doc(`item_${generatedId}`).set(newAsset).then(() => {
+        alert("Item logged to Firestore catalog pool.");
+        renderInventoryTable();
+        document.getElementById('wh-name').value = '';
+        document.getElementById('wh-brand').value = '';
+        document.getElementById('wh-price').value = '';
+    });
+}
