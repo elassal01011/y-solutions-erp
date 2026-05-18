@@ -1,57 +1,15 @@
-async function updateDashboardStats() {
+// Analytics Processing Script Engine
+function initDashboardAnalytics() {
+    const tbody = document.getElementById('revenue-table-body');
+    if (!tbody) return;
 
-    try {
-
-        // Projects
-        const projectsSnap = await db.collection('projects').get();
-
-        const projectsEl = document.getElementById('stat-projects');
-
-        if(projectsEl){
-            projectsEl.innerText = projectsSnap.size;
-        }
-
-        // Employees
-        const employeesSnap = await db.collection('employees').get();
-
-        const employeesEl = document.getElementById('stat-employees');
-
-        if(employeesEl){
-            employeesEl.innerText = employeesSnap.size;
-        }
-
-        // Products
-        const stockSnap = await db.collection('products').get();
-
-        let totalValue = 0;
-
-        stockSnap.forEach(doc => {
-
-            const data = doc.data();
-
-            totalValue += (data.buyPrice || 0) * (data.stock || 0);
-
-        });
-
-        const revenueEl = document.getElementById('stat-revenue');
-
-        if(revenueEl){
-            revenueEl.innerText =
-                `${totalValue.toLocaleString()} EGP`;
-        }
-
-    }
-
-    catch(error){
-
-        console.log(error);
-
-    }
-
+    tbody.innerHTML = '';
+    GLOBAL_REVENUE_DATA.forEach(row => {
+        tbody.innerHTML += `<tr>
+            <td><b>${row.month}</b></td>
+            <td>${row.projects}</td>
+            <td>${row.revenue.toLocaleString()} EGP</td>
+            <td style="color:#2ecc71; font-weight:600;">${row.profit.toLocaleString()} EGP</td>
+        </tr>`;
+    });
 }
-
-window.addEventListener('load',()=>{
-
-    updateDashboardStats();
-
-});
