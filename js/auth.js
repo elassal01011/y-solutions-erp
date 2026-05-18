@@ -1,217 +1,57 @@
-// ===============================
-// FIREBASE IMPORTS
-// ===============================
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    getFirestore,
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-
-// ===============================
-// FIREBASE CONFIG
-// ===============================
-
-const firebaseConfig = {
-    apiKey: "AIzaSyARIpexHYJRjy_K2mjjro68sKi-hQEfswc",
-    authDomain: "y-solutions-erp.firebaseapp.com",
-    projectId: "y-solutions-erp",
-    storageBucket: "y-solutions-erp.firebasestorage.app",
-    messagingSenderId: "414095083537",
-    appId: "1:414095083537:web:b5dbce7b9f255fa6bfc9b0",
-    measurementId: "G-YN7E8FTX3T"
-};
-
-
-// ===============================
-// INITIALIZE FIREBASE
-// ===============================
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
-
-
-// ===============================
-// LOGIN SYSTEM
-// ===============================
-
-const loginBtn = document.getElementById("loginBtn");
-
-if (loginBtn) {
-
-    loginBtn.addEventListener("click", async () => {
-
-        console.log("LOGIN STARTED");
-
-        const email = document.getElementById("email").value.trim();
-
-        const password = document.getElementById("password").value.trim();
-
-        // VALIDATION
-
-        if (!email || !password) {
-
-            alert("Please enter email and password");
-
-            return;
-        }
-
-        try {
-
-            // LOGIN
-
-            const userCredential = await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
-
-            const user = userCredential.user;
-
-            console.log("LOGIN SUCCESS");
-
-            console.log(user);
-
-            // GET USER ROLE
-
-            const userRef = doc(db, "users", user.uid);
-
-            const userSnap = await getDoc(userRef);
-
-            if (userSnap.exists()) {
-
-                const userData = userSnap.data();
-
-                console.log("USER DATA:", userData);
-
-                // SAVE TO LOCAL STORAGE
-
-                localStorage.setItem("uid", user.uid);
-
-                localStorage.setItem("email", user.email);
-
-                localStorage.setItem("role", userData.role);
-
-                localStorage.setItem("name", userData.name || "");
-
-                // ROLE REDIRECT
-
+// Y-Solutions ERP - Security Access & Identity Mapping
+function checkAccessControl(allowedRoles) {
+    auth.onAuthStateChanged(user => {
+        if (!user) {
+            window.location.href = "login.html";
+        } else {
+            const role = resolveUserRole(user.email);
+            if (allowedRoles && !allowedRoles.includes(role)) {
+                alert("Security Violation: Unauthorized operational section view.");
                 window.location.href = "dashboard.html";
-
             } else {
-
-                alert("User role not found in Firestore");
-
+                buildDynamicSidebarMenu(role);
+                document.body.style.display = "flex"; // Show layout safely
             }
-
-        } catch (error) {
-
-            console.error(error);
-
-            // FRIENDLY ERRORS
-
-            if (error.code === "auth/invalid-email") {
-
-                alert("Invalid email");
-
-            } else if (error.code === "auth/user-not-found") {
-
-                alert("User not found");
-
-            } else if (error.code === "auth/wrong-password") {
-
-                alert("Wrong password");
-
-            } else if (error.code === "auth/invalid-credential") {
-
-                alert("Wrong email or password");
-
-            } else {
-
-                alert(error.message);
-
-            }
-
         }
-
     });
-
 }
 
+function resolveUserRole(email) {
+    const format = email.toLowerCase();
+    if (format.includes("manager")) return "Manager";
+    if (format.includes("ops") || format.includes("operations")) return "Operations";
+    if (format.includes("hr")) return "HR";
+    if (format.includes("storage") || format.includes("warehouse")) return "Storage";
+    return "Sales";
+}
 
-// ===============================
-// SESSION CHECK
-// ===============================
+function buildDynamicSidebarMenu(currentRole) {
+    const sidebar = document.getElementById('sidebar-container');
+    if (!sidebar) return;
 
-onAuthStateChanged(auth, (user) => {
+    const email = auth.currentUser ? auth.currentUser.email : "";
+    let navLinksHtml = "";
 
-    console.log("AUTH STATE CHANGED");
+    if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="dashboard.html" id="nav-dash">Executive Dashboard</a>`;
+    if (currentRole === "Manager" || currentRole === "Sales") navLinksHtml += `<a href="quotation.html" id="nav-quote">Quotation System</a>`;
+    if (currentRole === "Manager" || currentRole === "Operations") navLinksHtml += `<a href="operations.html" id="nav-ops">Operations Desk</a>`;
+    if (currentRole === "Manager" || currentRole === "Storage") navLinksHtml += `<a href="warehouse.html" id="nav-wh">Storage Catalog</a>`;
+    if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="employees.html" id="nav-emp">HR Staff Directory</a>`;
 
-    if (user) {
+    sidebar.innerHTML = `
+        <h2>Y-Solutions</h2>
+        <p style="font-size: 0.8em; color: #bdc3c7; word-break: break-all;">${email}</p>
+        <span class="role-badge">${currentRole}</span>
+        <hr style="border-color:rgba(255,255,255,0.1); margin: 15px 0;">
+        <nav>${navLinksHtml}</nav>
+        <button onclick="auth.signOut().then(() => window.location.href='login.html')" class="logout-btn">Log Out</button>
+    `;
 
-        console.log("USER LOGGED IN");
-
-    } else {
-
-        console.log("NO USER");
-
-        // ONLY REDIRECT IF NOT IN LOGIN PAGE
-
-        const currentPage = window.location.pathname;
-
-        if (
-            !currentPage.includes("login.html") &&
-            !currentPage.endsWith("/")
-        ) {
-
-            window.location.href = "login.html";
-
-        }
-
-    }
-
-});
-
-
-// ===============================
-// LOGOUT SYSTEM
-// ===============================
-
-const logoutBtn = document.getElementById("logoutBtn");
-
-if (logoutBtn) {
-
-    logoutBtn.addEventListener("click", async () => {
-
-        try {
-
-            await signOut(auth);
-
-            localStorage.clear();
-
-            window.location.href = "login.html";
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("Logout Failed");
-
-        }
-
-    });
-
+    // Highlighting current selection row contextually
+    const path = window.location.pathname.split("/").pop();
+    if (path.includes("dashboard")) document.getElementById('nav-dash')?.classList.add('active');
+    if (path.includes("quotation")) document.getElementById('nav-quote')?.classList.add('active');
+    if (path.includes("operations")) document.getElementById('nav-ops')?.classList.add('active');
+    if (path.includes("warehouse")) document.getElementById('nav-wh')?.classList.add('active');
+    if (path.includes("employees")) document.getElementById('nav-emp')?.classList.add('active');
 }
