@@ -1,46 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Warehouse</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8"><title>Storage Warehouse Control</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
+    <script src="warehouse.js"></script>
 </head>
-<body>
-
-<div class="sidebar">
-    <h2>Warehouse</h2>
-</div>
-
-<div class="main">
-
-<div class="card">
-
-<h2>Add Item</h2>
-
-<input type="text" id="itemName" placeholder="Item Name">
-<input type="number" id="itemPrice" placeholder="Price">
-<input type="number" id="itemQty" placeholder="Quantity">
-
-<button id="saveItem">Save Item</button>
-
-</div>
-
-<div class="card">
-
-<table>
-<thead>
-<tr>
-<th>Item</th>
-<th>Price</th>
-<th>Quantity</th>
-</tr>
-</thead>
-<tbody id="warehouseTable"></tbody>
-</table>
-
-</div>
-
-</div>
-
-<script type="module" src="js/warehouse.js"></script>
+<body style="display:none;">
+    <div class="sidebar" id="sidebar-container"></div>
+    <div class="main-wrapper">
+        <div class="module-container">
+            <h3>Storage Vault Control Panel</h3>
+            <div class="box-panel" id="wh-write-panel">
+                <h4>Inject Asset Allocation Node inside Catalog</h4>
+                <div class="form-group-grid">
+                    <input type="text" id="wh-name" placeholder="Item Name Layout Designation">
+                    <input type="text" id="wh-brand" placeholder="Brand Entity Manufacturer">
+                    <select id="wh-cat"><option>Camera</option><option>Controller</option><option>Plug</option><option>Relay</option><option>Sensor</option><option>Switch</option></select>
+                    <input type="number" id="wh-price" placeholder="Cost Pricing Value (EGP)">
+                </div>
+                <button onclick="commitNewHardwareItem()" class="btn-primary">Inject and Save to Inventory Pool</button>
+            </div>
+            <h4>Available Stock Architecture Catalog Matrix</h4>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>ID Code</th><th>Classification</th><th>Model Reference</th><th>Brand Entity</th><th>Base Cost Index</th></tr></thead>
+                    <tbody id="warehouse-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
