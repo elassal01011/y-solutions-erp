@@ -1,72 +1,51 @@
 <!DOCTYPE html>
-<thead>
-<tr>
-<th>Client</th>
-<th>Status</th>
-<th>Update</th>
-</tr>
-</thead>
-<tbody id="operationsTable"></tbody>
-</table>
-
-</div>
-
-</div>
-
-<script type="module">
-
-import { db } from './js/config.js';
-
-import {
-collection,
-getDocs,
-doc,
-updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const table = document.getElementById('operationsTable');
-
-async function load(){
-
-const snapshot = await getDocs(collection(db,'orders'));
-
-snapshot.forEach((d)=>{
-
-const data = d.data();
-
-const row = `
-<tr>
-<td>${data.client}</td>
-<td>${data.status}</td>
-<td>
-<select onchange="updateStatus('${d.id}',this.value)">
-<option>Pending</option>
-<option>In Work</option>
-<option>Finished</option>
-</select>
-</td>
-</tr>
-`;
-
- table.innerHTML += row;
-
-});
-
-}
-
-window.updateStatus = async(id,status)=>{
-
-await updateDoc(doc(db,'orders',id),{
-status
-});
-
-alert('Status Updated');
-
-}
-
-load();
-
-</script>
-
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Operations Management</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
+</head>
+<body style="display:none;">
+    <div class="sidebar" id="sidebar-container"></div>
+    <div class="main-wrapper">
+        <div class="module-container">
+            <h3>Operations Logistics Realtime Terminal</h3>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Project ID</th><th>Region Block</th><th>Size Asset</th><th>Nodes Set</th><th>Deployment Status Matrix Link</th></tr></thead>
+                    <tbody>
+                        <tr><td>#101</td><td><b>Alexandria</b></td><td>225 m²</td><td>23 Nodes</td><td>
+                            <select onchange="updateFirebaseStatus(101, this.value)"><option>Pending</option><option selected>In Work</option><option>Finished</option></select>
+                        </td></tr>
+                        <tr><td>#102</td><td><b>New Capital</b></td><td>178 m²</td><td>18 Nodes</td><td>
+                            <select onchange="updateFirebaseStatus(102, this.value)"><option>Pending</option><option selected>In Work</option><option>Finished</option></select>
+                        </td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box-panel" style="margin-top:20px;">
+                <h4>File Dynamic Client Maintenance Servicing Ticket</h4>
+                <input type="text" id="maint-target" placeholder="Client Designation Identifier Key"><br>
+                <textarea id="maint-body" placeholder="Describe component structural issue report array metrics..."></textarea><br>
+                <button onclick="dispatchTicket()" class="btn-primary">Broadcast Ticket Set</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.onload = () => checkAccessControl(["Manager", "Operations"]);
+        function updateFirebaseStatus(id, value) {
+            db.collection('project_states').doc(`project_${id}`).set({ status: value, stamped: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+              .then(() => console.log("State updated."));
+        }
+        function dispatchTicket() {
+            db.collection('maintenance').add({ client: document.getElementById('maint-target').value, problem: document.getElementById('maint-body').value })
+              .then(() => { alert("Maintenance dispatched."); document.getElementById('maint-target').value=''; document.getElementById('maint-body').value=''; });
+        }
+    </script>
 </body>
 </html>
