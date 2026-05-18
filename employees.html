@@ -1,66 +1,33 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>HR Directory View</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
 </head>
-<body>
-
-<div class="sidebar">
-<h2>Employees</h2>
-</div>
-
-<div class="main">
-
-<div class="card">
-
-<h2>Staff Accounts</h2>
-
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Email</th>
-<th>Role</th>
-</tr>
-</thead>
-<tbody id="employeesTable"></tbody>
-</table>
-
-</div>
-
-</div>
-
-<script type="module">
-
-import { db } from './js/config.js';
-
-import {
-collection,
-getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const table = document.getElementById('employeesTable');
-
-async function load(){
-
-const snapshot = await getDocs(collection(db,'users'));
-
-snapshot.forEach((doc)=>{
-
-const data = doc.data();
-
- table.innerHTML += `
- <tr>
- <td>${data.name}</td>
- <td>${data.email}</td>
- <td>${data.role}</td>
- </tr>
- `;
-
-});
-
-}
-
-load();
-
-</script>
-
+<body style="display:none;">
+    <div class="sidebar" id="sidebar-container"></div>
+    <div class="main-wrapper">
+        <div class="module-container">
+            <h3>Human Resources Access Directory Logging</h3>
+            <p style="color:#7f8c8d; margin-bottom:15px;">System Security Accounts and Dynamic Framework Clearance Mapping Roles</p>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Authorized Employee Identity Protocol Access Link</th><th>Security Clearance Policy Profile</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>ceo.manager@y-solutions.com</code></td><td><span class="role-badge" style="background:#34495e;">Manager</span></td></tr>
+                        <tr><td><code>sales.lead@y-solutions.com</code></td><td><span class="role-badge" style="background:#34495e;">Sales</span></td></tr>
+                        <tr><td><code>operations.engineer@y-solutions.com</code></td><td><span class="role-badge" style="background:#34495e;">Operations</span></td></tr>
+                        <tr><td><code>hr.director@y-solutions.com</code></td><td><span class="role-badge" style="background:#34495e;">HR</span></td></tr>
+                        <tr><td><code>storage.keeper@y-solutions.com</code></td><td><span class="role-badge" style="background:#34495e;">Storage</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>window.onload = () => checkAccessControl(["Manager", "HR"]);</script>
 </body>
 </html>
