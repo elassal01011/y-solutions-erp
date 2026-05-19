@@ -1,106 +1,43 @@
-// ==========================================
-// Y SOLUTIONS ERP - EXECUTIVE DASHBOARD
-// SAFE VERSION
-// ==========================================
-
 document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Dashboard Loaded");
-
-    // ==========================================
-    // ACCESS CONTROL
-    // ==========================================
-
-    try {
-
-        if (typeof checkAccessControl === "function") {
-
-            checkAccessControl(["Manager", "HR"]);
-
-        } else {
-
-            console.warn("checkAccessControl() not found");
-
-        }
-
-    } catch (error) {
-
-        console.error("Access Control Error:", error);
-
-    }
-
-    // ==========================================
-    // TABLE BODY
-    // ==========================================
 
     const tableBody =
         document.getElementById("revenue-table-body");
 
     if (!tableBody) {
 
-        console.error(
-            "Element #revenue-table-body NOT FOUND"
-        );
+        console.error("Table body not found");
 
         return;
-
     }
 
-    // ==========================================
-    // FALLBACK DATA
-    // ==========================================
+    const revenueData = [
 
-    let revenueData = [];
+        {
+            month: "January",
+            projects: 12,
+            revenue: 250000,
+            profit: 70000
+        },
 
-    if (
-        typeof GLOBAL_REVENUE_DATA !== "undefined" &&
-        Array.isArray(GLOBAL_REVENUE_DATA)
-    ) {
+        {
+            month: "February",
+            projects: 18,
+            revenue: 320000,
+            profit: 90000
+        },
 
-        revenueData = GLOBAL_REVENUE_DATA;
+        {
+            month: "March",
+            projects: 25,
+            revenue: 450000,
+            profit: 120000
+        }
 
-    } else {
-
-        console.warn(
-            "GLOBAL_REVENUE_DATA missing -> Using fallback data"
-        );
-
-        revenueData = [
-
-            {
-                month: "January",
-                projects: 8,
-                revenue: 120000,
-                profit: 30000
-            },
-
-            {
-                month: "February",
-                projects: 12,
-                revenue: 180000,
-                profit: 45000
-            },
-
-            {
-                month: "March",
-                projects: 15,
-                revenue: 250000,
-                profit: 70000
-            }
-
-        ];
-
-    }
-
-    // ==========================================
-    // CLEAR TABLE
-    // ==========================================
+    ];
 
     tableBody.innerHTML = "";
-
-    // ==========================================
-    // RENDER TABLE
-    // ==========================================
 
     revenueData.forEach((row) => {
 
@@ -117,11 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
             </td>
 
             <td>
-                ${Number(row.revenue).toLocaleString()} EGP
+                ${row.revenue.toLocaleString()} EGP
             </td>
 
-            <td style="color:#16a34a;font-weight:bold;">
-                +${Number(row.profit).toLocaleString()} EGP
+            <td style="color:green;font-weight:bold;">
+                +${row.profit.toLocaleString()} EGP
             </td>
 
         `;
@@ -129,7 +66,5 @@ document.addEventListener("DOMContentLoaded", () => {
         tableBody.appendChild(tr);
 
     });
-
-    console.log("Revenue Table Rendered Successfully");
 
 });
