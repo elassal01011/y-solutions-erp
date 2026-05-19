@@ -2,12 +2,14 @@
 function checkAccessControl(allowedRoles) {
     auth.onAuthStateChanged(user => {
         if (!user) {
-            window.location.href = "login.html";
+            // FIXED: Capitalized .Html to match repository
+            window.location.href = "login.Html";
         } else {
             const role = resolveUserRole(user.email);
             if (allowedRoles && !allowedRoles.includes(role)) {
                 alert("Security Violation: Unauthorized operational section view.");
-                window.location.href = "dashboard.html";
+                // FIXED: Capitalized .Html to match repository
+                window.location.href = "dashboard.Html";
             } else {
                 buildDynamicSidebarMenu(role);
                 document.body.style.display = "flex"; // Show layout safely
@@ -32,11 +34,12 @@ function buildDynamicSidebarMenu(currentRole) {
     const email = auth.currentUser ? auth.currentUser.email : "";
     let navLinksHtml = "";
 
-    if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="dashboard.html" id="nav-dash">Executive Dashboard</a>`;
-    if (currentRole === "Manager" || currentRole === "Sales") navLinksHtml += `<a href="quotation.html" id="nav-quote">Quotation System</a>`;
-    if (currentRole === "Manager" || currentRole === "Operations") navLinksHtml += `<a href="operations.html" id="nav-ops">Operations Desk</a>`;
-    if (currentRole === "Manager" || currentRole === "Storage") navLinksHtml += `<a href="warehouse.html" id="nav-wh">Storage Catalog</a>`;
-    if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="employees.html" id="nav-emp">HR Staff Directory</a>`;
+    // FIXED: Capitalized all link addresses to match exact GitHub filenames
+    if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="dashboard.Html" id="nav-dash">Executive Dashboard</a>`;
+    if (currentRole === "Manager" || currentRole === "Sales") navLinksHtml += `<a href="quotation.Html" id="nav-quote">Quotation System</a>`;
+    if (currentRole === "Manager" || currentRole === "Operations") navLinksHtml += `<a href="OPErations.Html" id="nav-ops">Operations Desk</a>`;
+    if (currentRole === "Manager" || currentRole === "Storage") navLinksHtml += `<a href="warehouse.Html" id="nav-wh">Storage Catalog</a>`;
+    if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="employees.Html" id="nav-emp">HR Staff Directory</a>`;
 
     sidebar.innerHTML = `
         <h2>Y-Solutions</h2>
@@ -44,7 +47,7 @@ function buildDynamicSidebarMenu(currentRole) {
         <span class="role-badge">${currentRole}</span>
         <hr style="border-color:rgba(255,255,255,0.1); margin: 15px 0;">
         <nav>${navLinksHtml}</nav>
-        <button onclick="auth.signOut().then(() => window.location.href='login.html')" class="logout-btn">Log Out</button>
+        <button onclick="auth.signOut().then(() => window.location.href='login.Html')" class="logout-btn">Log Out</button>
     `;
 
     // Highlighting current selection row contextually
