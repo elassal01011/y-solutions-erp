@@ -1,15 +1,16 @@
-// Y-Solutions ERP - Executive Dashboard UI Controller
+// Y-Solutions ERP - Executive Dashboard UI Controller Interface
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Fire security fence immediately (Only Manager & HR access this module)
+    // 1. Instantly trigger security wall checks (Only Managers & HR personnel allowed here)
     if (typeof checkAccessControl === "function") {
         checkAccessControl(["Manager", "HR"]);
     }
 
-    // 2. Loop through app.js dataset and paint the financial trajectory table
+    // 2. Safely capture the UI Table hook
     const tableBody = document.getElementById("revenue-table-body");
     
+    // 3. Verify datasets are alive and run the view generator loop
     if (tableBody && typeof GLOBAL_REVENUE_DATA !== "undefined") {
-        tableBody.innerHTML = ""; // Wipe default text out
+        tableBody.innerHTML = ""; // Clear existing table structure placeholders
         
         GLOBAL_REVENUE_DATA.forEach(row => {
             const tr = document.createElement("tr");
