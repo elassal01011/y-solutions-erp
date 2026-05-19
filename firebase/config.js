@@ -1,4 +1,4 @@
-// Y-Solutions ERP - Firebase Initialization Config
+// Y-Solutions ERP - Firebase Configuration & Initialization
 const firebaseConfig = {
     apiKey: "AIzaSyARIpexHYJRjy_K2mjjro68sKi-hQEfswc",
     authDomain: "y-solutions-erp.firebaseapp.com",
@@ -9,6 +9,11 @@ const firebaseConfig = {
     measurementId: "G-YN7E8FTX3T"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Safety check to ensure Firebase doesn't initialize twice
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+// Global exposure for system modules
 const auth = firebase.auth();
 const db = firebase.firestore();
