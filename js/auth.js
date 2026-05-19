@@ -2,17 +2,16 @@
 function checkAccessControl(allowedRoles) {
     auth.onAuthStateChanged(user => {
         if (!user) {
-            // FIXED: Capitalized .Html to match repository
+            // FIXED: Capitalized extension to match GitHub deployment
             window.location.href = "login.Html";
         } else {
             const role = resolveUserRole(user.email);
             if (allowedRoles && !allowedRoles.includes(role)) {
                 alert("Security Violation: Unauthorized operational section view.");
-                // FIXED: Capitalized .Html to match repository
                 window.location.href = "dashboard.Html";
             } else {
                 buildDynamicSidebarMenu(role);
-                document.body.style.display = "flex"; // Show layout safely
+                document.body.style.display = "flex"; // Reveal securely checked interface
             }
         }
     });
@@ -34,7 +33,7 @@ function buildDynamicSidebarMenu(currentRole) {
     const email = auth.currentUser ? auth.currentUser.email : "";
     let navLinksHtml = "";
 
-    // FIXED: Capitalized all link addresses to match exact GitHub filenames
+    // FIXED: Formatted layout file triggers explicitly to uppercase .Html extensions
     if (currentRole === "Manager" || currentRole === "HR") navLinksHtml += `<a href="dashboard.Html" id="nav-dash">Executive Dashboard</a>`;
     if (currentRole === "Manager" || currentRole === "Sales") navLinksHtml += `<a href="quotation.Html" id="nav-quote">Quotation System</a>`;
     if (currentRole === "Manager" || currentRole === "Operations") navLinksHtml += `<a href="OPErations.Html" id="nav-ops">Operations Desk</a>`;
@@ -50,11 +49,11 @@ function buildDynamicSidebarMenu(currentRole) {
         <button onclick="auth.signOut().then(() => window.location.href='login.Html')" class="logout-btn">Log Out</button>
     `;
 
-    // Highlighting current selection row contextually
+    // Active link UI selector logic
     const path = window.location.pathname.split("/").pop();
     if (path.includes("dashboard")) document.getElementById('nav-dash')?.classList.add('active');
     if (path.includes("quotation")) document.getElementById('nav-quote')?.classList.add('active');
-    if (path.includes("operations")) document.getElementById('nav-ops')?.classList.add('active');
+    if (path.includes("OPErations")) document.getElementById('nav-ops')?.classList.add('active');
     if (path.includes("warehouse")) document.getElementById('nav-wh')?.classList.add('active');
     if (path.includes("employees")) document.getElementById('nav-emp')?.classList.add('active');
 }
