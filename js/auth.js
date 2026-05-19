@@ -3,12 +3,12 @@ function checkAccessControl(allowedRoles) {
     auth.onAuthStateChanged(user => {
         if (!user) {
             // FIXED: Capitalized extension to match GitHub deployment
-            window.location.href = "login.Html";
+            window.location.href = "login.html";
         } else {
             const role = resolveUserRole(user.email);
             if (allowedRoles && !allowedRoles.includes(role)) {
                 alert("Security Violation: Unauthorized operational section view.");
-                window.location.href = "dashboard.Html";
+                window.location.href = "dashboard.html";
             } else {
                 buildDynamicSidebarMenu(role);
                 document.body.style.display = "flex"; // Reveal securely checked interface
